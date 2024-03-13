@@ -1,0 +1,2 @@
+类中间不要写readline等语句
+对参数的性质进行合理规范，什么使用public，什么使用private
