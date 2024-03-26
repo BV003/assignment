@@ -1,59 +1,99 @@
-﻿using System.Collections.Generic;
+﻿using System;
 
-class 
+public class ConsoleApp1
+{
+    public static void Main(string[] args)
+    {
+        GenericLinkedList<int> intList = new GenericLinkedList<int>();
+        for (int x = 0; x < 10; x++)
+        {
+            intList.Add(x);
+        }
 
-public class Node<T> { 
-    public Node<T> Next { get; set; }
-    public T Data { get; set; }
+        intList.ForEach(item => Console.WriteLine(item)); // 打印链表中的每个元素
+        int max = intList.Max((a, b) => a > b ? a : b); // 求最大值
+        int min = intList.Min((a, b) => a < b ? a : b); // 求最小值
+        int sum = intList.Sum((a, b) => a + b); // 求和
 
-    public Node(T t) {
-        Next = null;
-        Data = t;
+        Console.WriteLine($"Max: {max}, Min: {min}, Sum: {sum}");
     }
 }
 
-
-
- class GenericList<T>
+public class GenericLinkedList<T>
 {
-    private Node<T>? head;
+    private Node<T> head;
     private Node<T> tail;
 
-    public GenericList()
+    public class Node<T>
     {
-        tail = head = null;
-    }
-    public Node<T> Head
-    {
-        get => head;
+        public T Data { get; set; }
+        public Node<T> Next { get; set; }
+
+        public Node(T data)
+        {
+            Data = data;
+            Next = null;
+        }
     }
 
-    public void Add(T t) {
-        Node<T> n = new Node<T>(t);
-        if(tail==null)
+    public void Add(T data)
+    {
+        Node<T> newNode = new Node<T>(data);
+        if (tail == null)
         {
-            head=tail = n;
+            head = tail = newNode;
         }
         else
         {
-            tail.Next = n;
-            tail = n;
+            tail.Next = newNode;
+            tail = newNode;
         }
     }
-
-    delegate void Action<T>(T element);
 
     public void ForEach(Action<T> action)
     {
-        Node<T> p = head;
-        while(p!=null)
+        Node<T> current = head;
+        while (current != null)
         {
-            action(p.Data);
-            p= p.Next;
+            action(current.Data);
+            current = current.Next;
         }
     }
 
+    public T Min(Func<T, T, T> compare)
+    {
+        Node<T> current = head;
+        T min = current.Data;
+        while (current != null)
+        {
+            min = compare(min, current.Data);
+            current = current.Next;
+        }
+        return min;
+    }
 
+    public T Max(Func<T, T, T> compare)
+    {
+        Node<T> current = head;
+        T max = current.Data;
+        while (current != null)
+        {
+            max = compare(max, current.Data);
+            current = current.Next;
+        }
+        return max;
+    }
+
+    public T Sum(Func<T, T, T> add)
+    {
+        Node<T> current = head;
+        T sum = add(default(T), current.Data); // 使用默认值进行初始化
+        while (current != null)
+        {
+            sum = add(sum, current.Data);
+            current = current.Next;
+        }
+        return sum;
+    }
 }
-
 
